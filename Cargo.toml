@@ -2,13 +2,45 @@
 name = "nchain"
 version = "0.1.0"
 edition = "2021"
+authors = ["dijdzv <dijdzv@gmail.com>"]
+license = "MIT OR Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+anyhow = "1.0.82"
 axum = "0.7.5"
+config = "0.14.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.116"
 tokio = { version = "1.37.0", features = ["full"] }
 tracing = "0.1"
 tracing-subscriber = "0.3.18"
+
+[package.metadata.deb]
+maintainer = "dijdzv <dijdzv@gmail.com>"
+copyright = "2024, dijdzv"
+depends = "$auto, systemd"
+conf-files = [
+  "/usr/local/etc/nchain-config.ini",
+  "/etc/systemd/system/nchain.service",
+]
+section = "admin"
+priority = "optional"
+assets = [
+  [
+    "target/release/nchain",
+    "/usr/local/bin/",
+    "755",
+  ],
+  [
+    "assets/nchain-config.ini",
+    "/usr/local/etc/",
+    "644",
+  ],
+  [
+    "assets/nchain.service",
+    "/etc/systemd/system/",
+    "644",
+  ],
+]

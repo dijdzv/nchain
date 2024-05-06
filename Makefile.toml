@@ -1,0 +1,36 @@
+[tasks.deb-build]
+script = ['''
+    #!/bin/sh
+    output=$(cargo deb)
+    last_line=$(echo "$output" | tail -n 1)
+    echo $last_line > /tmp/deb_output
+    ''']
+
+[tasks.deb-install]
+script = ['''
+    #!/bin/sh
+    deb_file=$(cat /tmp/deb_output)
+    sudo dpkg -i "$deb_file"
+    ''']
+
+[tasks.deb]
+dependencies = ["deb-build", "deb-install"]
+
+[tasks.start]
+command = "systemctl"
+args = ["start", "nchain"]
+
+[tasks.status]
+command = "systemctl"
+args = ["status", "nchain"]
+
+[tasks.stop]
+command = "systemctl"
+args = ["stop", "nchain"]
+
+[tasks.restart]
+command = "systemctl"
+args = ["restart", "nchain"]
+
+[tasks.run]
+dependencies = ["deb", "start"]

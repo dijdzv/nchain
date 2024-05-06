@@ -1,14 +1,21 @@
+use anyhow::Result;
 use axum::{
     http::StatusCode,
     routing::{get, post},
     Json, Router,
 };
 use serde::{Deserialize, Serialize};
+use settings::Settings;
+
+mod settings;
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<()> {
     // initialize tracing
     tracing_subscriber::fmt::init();
+
+    let settings = Settings::new()?;
+    let server_address = format!("{}:{}", settings.server_address, settings.server_port);
 
     // build our application with a route
     let app = Router::new()
@@ -18,8 +25,10 @@ async fn main() {
         .route("/users", post(create_user));
 
     // run our app with hyper, listening globally on port 80
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:80").await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    let listener = tokio::net::TcpListener::bind(server_address).await?;
+    axum::serve(listener, app).await?;
+
+    Ok(())
 }
 
 // basic handler that responds with a static string
