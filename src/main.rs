@@ -2,11 +2,14 @@ use anyhow::Result;
 use axum::{routing::get, Router};
 use settings::Settings;
 
+mod monitor;
 mod settings;
 
 #[tokio::main]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt::init();
+
+    monitor::run()?;
 
     let settings = Settings::new()?;
     let server_address = format!("{}:{}", settings.server_address, settings.server_port);

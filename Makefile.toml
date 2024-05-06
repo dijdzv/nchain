@@ -20,10 +20,6 @@ dependencies = ["deb-build", "deb-install"]
 command = "systemctl"
 args = ["start", "nchain"]
 
-[tasks.status]
-command = "systemctl"
-args = ["status", "nchain"]
-
 [tasks.stop]
 command = "systemctl"
 args = ["stop", "nchain"]
@@ -31,6 +27,17 @@ args = ["stop", "nchain"]
 [tasks.restart]
 command = "systemctl"
 args = ["restart", "nchain"]
+
+[tasks.status-nchain]
+command = "systemctl"
+args = ["status", "nchain"]
+
+[tasks.status-manager]
+command = "systemctl"
+args = ["status", "cockpit.socket"]
+
+[tasks.status]
+dependencies = ["status-nchain", "status-manager"]
 
 [tasks.run]
 dependencies = ["deb", "start"]
